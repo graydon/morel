@@ -18,7 +18,6 @@
  */
 package net.hydromatic.morel;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
@@ -80,7 +79,8 @@ public class MainTest {
     };
   }
 
-  private static List<Object> list(Object... values) {
+  @SafeVarargs
+  private static <E> List<E> list(E... values) {
     return Arrays.asList(values);
   }
 
@@ -89,7 +89,7 @@ public class MainTest {
     final Set<E> expectedSet = Sets.newHashSet(elements);
     return new TypeSafeMatcher<Iterable<E>>() {
       protected boolean matchesSafely(Iterable<E> item) {
-        return Sets.newHashSet((Iterable) item).equals(expectedSet);
+        return Sets.newHashSet(item).equals(expectedSet);
       }
 
       public void describeTo(Description description) {
@@ -382,10 +382,14 @@ public class MainTest {
         .assertType("bool * int");
   }
 
-  @Ignore("disable failing test - enable when we have polymorphic types")
   @Test public void testHdIsPolymorphic() {
     ml("(List_hd [1, 2], List_hd [false, true])")
-        .assertType("int * bool");
+        .assertType("int * bool")
+        .assertEval(is(list(1, false)));
+  }
+
+  @Ignore("disable failing test - enable when we have polymorphic types")
+  @Test public void testHdIsPolymorphic2() {
     ml("let\n"
         + "  val h = List_hd\n"
         + "in\n"
@@ -599,11 +603,11 @@ public class MainTest {
         .assertEval(is(9));
 
     // tuple
-    ml("(1, 2)").assertEval(is(Arrays.asList(1, 2)));
+    ml("(1, 2)").assertEval(is(list(1, 2)));
     ml("(1, (2, true))")
-        .assertEval(is(Arrays.asList(1, Arrays.asList(2, true))));
+        .assertEval(is(list(1, list(2, true))));
     ml("()").assertEval(is(Collections.emptyList()));
-    ml("(1, 2, 1, 4)").assertEval(is(Arrays.asList(1, 2, 1, 4)));
+    ml("(1, 2, 1, 4)").assertEval(is(list(1, 2, 1, 4)));
   }
 
   @Test public void testLetSequentialDeclarations() {
@@ -737,13 +741,13 @@ public class MainTest {
     ml("{0=1}").assertError(is("label must be positive"));
     ml("{a = 1, b = true}").assertType("{a:int, b:bool}");
     ml("{b = true, a = 1}").assertType("{a:int, b:bool}");
-    ml("{a = 1, b = 2}").assertEval(is(Arrays.asList(1, 2)));
-    ml("{a = true, b = ~2}").assertEval(is(Arrays.asList(true, -2)));
+    ml("{a = 1, b = 2}").assertEval(is(list(1, 2)));
+    ml("{a = true, b = ~2}").assertEval(is(list(true, -2)));
     ml("{a = true, b = ~2, c = \"c\"}")
-        .assertEval(is(Arrays.asList(true, -2, "c")));
+        .assertEval(is(list(true, -2, "c")));
     ml("let val ab = {a = true, b = ~2} in #a ab end").assertEval(is(true));
     ml("{a = true, b = {c = 1, d = 2}}")
-        .assertEval(is(Arrays.asList(true, Arrays.asList(1, 2))));
+        .assertEval(is(list(true, list(1, 2))));
     ml("#a {a = 1, b = true}")
         .assertType("int")
         .assertEval(is(1));
@@ -752,7 +756,7 @@ public class MainTest {
         .assertEval(is(true));
     ml("#b {a = 1, b = 2}").assertEval(is(2));
     ml("#b {a = 1, b = {x = 3, y = 4}, z = true}")
-        .assertEval(is(Arrays.asList(3, 4)));
+        .assertEval(is(list(3, 4)));
     ml("#x (#b {a = 1, b = {x = 3, y = 4}, z = true})").assertEval(is(3));
   }
 
@@ -811,7 +815,7 @@ public class MainTest {
     ml("()").assertType("unit");
     ml("{}")
         .assertType("unit")
-        .assertEval(is(ImmutableList.of()));
+        .assertEval(is(list()));
   }
 
   @Test public void testList() {
@@ -824,7 +828,7 @@ public class MainTest {
     ml("1 :: []").assertType("int list");
     ml("1 :: 2 :: []")
         .assertType("int list")
-        .assertEval(is(Arrays.asList(1, 2)));
+        .assertEval(is(list(1, 2)));
     ml("fn [] => 0").assertType("'a list -> int");
   }
 
@@ -988,7 +992,7 @@ public class MainTest {
         + "end";
     ml(ml).assertParseSame()
         .assertType("(INTEGER of int | RATIONAL of int * int | ZERO)")
-        .assertEval(is(ImmutableList.of("RATIONAL", ImmutableList.of(2, 3))));
+        .assertEval(is(list("RATIONAL", list(2, 3))));
   }
 
   @Test public void testDatatype2() {
@@ -999,7 +1003,7 @@ public class MainTest {
         + "end";
     ml(ml).assertParseSame()
         .assertType("(INTEGER of int | RATIONAL of int * int | ZERO)")
-        .assertEval(is(ImmutableList.of("RATIONAL", ImmutableList.of(2, 3))));
+        .assertEval(is(list("RATIONAL", list(2, 3))));
   }
 
   @Test public void testDatatype3() {
@@ -1080,7 +1084,7 @@ public class MainTest {
         + "in\n"
         + "  from e in emps yield #deptno e\n"
         + "end";
-    ml(ml).assertEval(is(Arrays.asList(10, 20, 30, 30)));
+    ml(ml).assertEval(is(list(10, 20, 30, 30)));
   }
 
   @Test public void testFromYieldExpression() {
@@ -1093,7 +1097,7 @@ public class MainTest {
         + "in\n"
         + "  from e in emps yield (#id e + #deptno e)\n"
         + "end";
-    ml(ml).assertEval(is(Arrays.asList(110, 121, 132, 133)));
+    ml(ml).assertEval(is(list(110, 121, 132, 133)));
   }
 
   @Test public void testFromWhere() {
@@ -1106,7 +1110,7 @@ public class MainTest {
         + "in\n"
         + "  from e in emps where #deptno e = 30 yield #id e\n"
         + "end";
-    ml(ml).assertEval(is(Arrays.asList(102, 103)));
+    ml(ml).assertEval(is(list(102, 103)));
   }
 
   @Test public void testFromNoYield() {
@@ -1117,7 +1121,7 @@ public class MainTest {
         + "in\n"
         + "  from e in emps where #deptno e = 30\n"
         + "end";
-    ml(ml).assertEval(is(Arrays.asList(Arrays.asList(30, 103, "Scooby"))));
+    ml(ml).assertEval(is(list(list(30, 103, "Scooby"))));
   }
 
   @Test public void testFromJoinNoYield() {
@@ -1130,12 +1134,12 @@ public class MainTest {
         + "in\n"
         + "  from e in emps, d in depts where #deptno e = #deptno d\n"
         + "end";
-    final List eRow = Arrays.asList(10, "Sales");
-    final List bRow = Arrays.asList(10, 100, "Fred");
+    final List<Object> eRow = list(10, "Sales");
+    final List<Object> bRow = list(10, 100, "Fred");
     ml(ml)
         .assertType("{d:{deptno:int, name:string},"
             + " e:{deptno:int, id:int, name:string}} list")
-        .assertEval(is(Collections.singletonList(Arrays.asList(eRow, bRow))));
+        .assertEval(is(list(list(eRow, bRow))));
   }
 
   @Test public void testFromGroupWithoutCompute() {
