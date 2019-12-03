@@ -58,4 +58,55 @@ in
 end;
 *)
 
+(* Exponential type. *)
+(* Note that we prune the expression when it gets too large. *)
+(*
+let fun f x = (x, x) in f (f 0) end;
+val it = ((0,0),(0,0)) : (int * int) * (int * int)
+let fun f x = (x, x) in f (f (f 0)) end;
+val it = (((0,0),(0,0)),((0,0),(0,0)))
+  : ((int * int) * (int * int)) * ((int * int) * (int * int))
+let fun f x = (x, x) in f (f (f (f 0))) end;
+val it = ((((0,0),(0,0)),((0,0),(0,0))),(((0,0),(0,0)),((0,0),(0,0))))
+  : (((int * int) * (int * int)) * ((int * int) * (int * int))) *
+    (((int * int) * (int * int)) * ((int * int) * (int * int)))
+let fun f x = (x, x) in f (f (f (f (f 0)))) end;
+val it =
+  (((((#,#),(#,#)),((#,#),(#,#))),(((#,#),(#,#)),((#,#),(#,#)))),
+   ((((#,#),(#,#)),((#,#),(#,#))),(((#,#),(#,#)),((#,#),(#,#)))))
+  : ((((int * int) * (int * int)) * ((int * int) * (int * int))) *
+     (((int * int) * (int * int)) * ((int * int) * (int * int)))) *
+    ((((int * int) * (int * int)) * ((int * int) * (int * int))) *
+     (((int * int) * (int * int)) * ((int * int) * (int * int))))
+let fun f x = (x, [x]) in f (f (f (f (f (f 0))))) end;
+val it =
+  (((((#,#),(#,#)),((#,#),(#,#))),(((#,#),(#,#)),((#,#),(#,#)))),
+   ((((#,#),(#,#)),((#,#),(#,#))),(((#,#),(#,#)),((#,#),(#,#)))))
+  : (((((int * int) * (int * int)) * ((int * int) * (int * int))) *
+      (((int * int) * (int * int)) * ((int * int) * (int * int)))) *
+     ((((int * int) * (int * int)) * ((int * int) * (int * int))) *
+      (((int * int) * (int * int)) * ((int * int) * (int * int))))) *
+    (((((int * int) * (int * int)) * ((int * int) * (int * int))) *
+      (((int * int) * (int * int)) * ((int * int) * (int * int)))) *
+     ((((int * int) * (int * int)) * ((int * int) * (int * int))) *
+      (((int * int) * (int * int)) * ((int * int) * (int * int)))))
+let fun f x = (x, [x]) in f (f (f (f (f (f 0))))) end;
+val it = (((((#,#),[#]),[(#,#)]),[((#,#),[#])]),[(((#,#),[#]),[(#,#)])])
+  : (((((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) *
+      (((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) list) *
+     ((((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) *
+      (((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) list) list) *
+    (((((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) *
+      (((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) list) *
+     ((((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) *
+      (((int * int list) * (int * int list) list) *
+       ((int * int list) * (int * int list) list) list) list) list) list
+ *)
 (*) End type.sml
