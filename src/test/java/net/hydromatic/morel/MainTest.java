@@ -391,6 +391,16 @@ public class MainTest {
   @Ignore("disable failing test - enable when we have polymorphic types")
   @Test public void testHdIsPolymorphic2() {
     ml("let\n"
+        + "  val h = List_length\n"
+        + "in\n"
+        + "   (h [1], h [false])\n"
+        + "end")
+        .assertType("int * bool");
+  }
+
+  @Ignore("disable failing test - enable when we have polymorphic types")
+  @Test public void testHdIsPolymorphic2Original() {
+    ml("let\n"
         + "  val h = List_hd\n"
         + "in\n"
         + "   (h [1, 2], h [false, true])\n"

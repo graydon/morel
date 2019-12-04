@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 
 import net.hydromatic.morel.ast.Ast;
 import net.hydromatic.morel.ast.AstNode;
+import net.hydromatic.morel.ast.AstWriter;
 import net.hydromatic.morel.ast.Pos;
 import net.hydromatic.morel.type.ApplyType;
 import net.hydromatic.morel.type.DataType;
@@ -98,6 +99,32 @@ public class TypeResolver {
     final TypeEnv typeEnv = typeEnvs.typeEnv;
     final Map<Ast.IdPat, Unifier.Term> termMap = new LinkedHashMap<>();
     final Ast.Decl node2 = deduceDeclType(typeEnv, decl, termMap);
+    if (true) {
+      // Marked final because you should override unparse, not toString
+      System.out.println(
+          node2.unparse(
+              new AstWriter() {
+                @Override public AstWriter append(AstNode node, int left,
+                    int right) {
+                  final Unifier.Term term = map.get(node);
+                  if (term == null || node instanceof Ast.Decl || node instanceof Ast.ValBind) {
+                    return super.append(node, left, right);
+                  }
+                  if (node instanceof Ast.Literal
+                      || node instanceof Ast.Id
+                      || node instanceof Ast.IdPat) {
+                    // no parentheses needed
+                    super.append(node, left, right);
+                    super.append(": " + term);
+                  } else {
+                    super.append("(");
+                    super.append(node, left, right);
+                    super.append("): " + term);
+                  }
+                  return this;
+                }
+              }));
+    }
     final List<Unifier.TermTerm> termPairs = new ArrayList<>();
     terms.forEach(tv ->
         termPairs.add(new Unifier.TermTerm(tv.term, tv.variable)));

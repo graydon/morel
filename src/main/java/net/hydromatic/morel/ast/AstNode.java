@@ -42,7 +42,11 @@ public abstract class AstNode {
    */
   @Override public final String toString() {
     // Marked final because you should override unparse, not toString
-    return unparse(new AstWriter(), 0, 0).toString();
+    return unparse(new AstWriter()).toString();
+  }
+
+  public final AstWriter unparse(AstWriter w) {
+    return unparse(w, 0, 0);
   }
 
   abstract AstWriter unparse(AstWriter w, int left, int right);
