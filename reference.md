@@ -24,74 +24,69 @@ License.
 
 ## Grammar
 
-### Not supported
-* identifiers: longid
-* expressions: type annotation,
-  `raise` (exception raising),
-  `handle` (exception handling),
-  `while` (iteration)
-* patterns: type annotation,
-  `as` (layered patterns)
-
 ### Constants
 
 <pre>
-con    ::= int                 // integer
-           word                // word
-           float               // floating point
-           char                // character
-           string              // string
-int	   ::= ⟨~⟩num              // decimal
-           ⟨~⟩0xhex            // hexadecimal
-word   ::= 0wnum               // decimal
-           0wxhex              // hexadecimal
-float  ::= ⟨~⟩num.num          // floating point
-           ⟨~⟩num⟨.num⟩e⟨~⟩num // scientific
-char   ::= #"ascii"            // character
-string ::= "⟨ascii⟩*"          // string
-num    ::= ⟨digit⟩+            // number
-hex    ::= ⟨digit | letter⟩+   // hexadecimal number (letters may
-                               // only be in the range A-F)
-ascii  ::= ...                 // single non-" ASCII character or
-                               // \-headed escape sequence
+<i>con</i>: <i>int</i>              integer
+   | <i>float</i>            floating point
+   | <i>char</i>             character
+   | <i>string</i>           string
+<i>int</i>: ['~']<i>num</i>         decimal
+   | ['~']'0x'<i>hex</i>     hexadecimal
+<i>word</i>: 0wnum           decimal
+   | '0wx'<i>hex</i>            hexadecimal
+<i>float</i>: ['~'] <i>num</i> '.' <i>num</i>      floating point
+   | ['~'] <i>num</i> ['.' <i>num</i>] 'e' ['~'] <i>num</i>   scientific
+<i>char</i>: '#"' <i>ascii</i> '"'      character
+<i>string<i>: '"' <i>ascii</i>* '"'       string
+<i>num</i>: <i>digit</i> <i>digit</i>*             number
+<i>hex</i>: (<i>digit</i> | <i>letter</i>) (<i>digit</i> | <i>letter</i>)* hexadecimal number
+                               (letters may only be in the range A-F)
+<i>ascii</i>: ...              single non-" ASCII character or
+                               \-headed escape sequence
 </pre>
 
 ## Identifiers
 
 <pre>
-id     ::= letter⟨letter | digit | ' | _⟩* // alphanumeric
-           ⟨! | % | & | $ | # | +
-           | - | / | : | < | = | >
-           | ? | @ | \ | ~ | ` | ^
-           | | | *⟩+           // symbolic (not allowed for type
-                               // variables or module language
-                               // identifiers)
-var    ::= '⟨letter | digit | ' | _⟩* // unconstrained
-            ''⟨letter | digit | ' | _⟩* // equality
-lab    ::= id                  // identifier
-           num                 // number (may not start with 0)
+<i>id</i>:   <i>letter</i> (<i>letter</i> | <i>digit</i> | ''' | '_')*
+                         alphanumeric
+    | ('!' | '%' | '&' | '$' | '#' | '+' | '-'
+      | '/' | ':' | '<' | '=' | '>' | '?' | '@'
+      | '\' | '~' | '`' | '^' | '|' | '*')+
+                         symbolic (not allowed for type variables
+                         or module language identifiers)
+<i>var</i>:  ''' (<i>letter</i> | <i>digit</i> | ''' | '_')*
+                         unconstrained
+      '''' (<i>letter</i> | <i>digit</i> | ''' | '_'⟩*
+                         equality
+<i>lab</i>:  <i>id</i>                 identifier
+      <i>num</i>                number (may not start with 0)
 </pre>
 
 ### Expressions
 
-exp    ::= con            // constant
-           ⟨op⟩ id        // value or constructor identifier
-           exp1 exp2      // application
-           exp1 id exp2   // infix application
-           ( exp )        // parentheses
-           ( exp1 , ... , expn ) // tuple (n ≠ 1)
-           { ⟨exprow⟩ }   // record
-           # lab          // record selector
-           [ exp1 , ... , expn ] // list (n ≥ 0)
-           ( exp1 ; ... ; expn ) // sequence (n ≥ 2)
-           let dec in exp1 ; ... ; expn end // local declaration (n ≥ 1)
-           exp1 andalso exp2 // conjunction
-           exp1 orelse exp2 // disjunction
-           if exp1 then exp2 else exp3 // conditional
-           case exp of match // case analysis
-           fn match       // function
-exprow ::= ⟨lab =⟩ exp ⟨, exprow⟩ // expression row
-match  ::= pat => exp ⟨| match⟩ // match
+<pre>
+<i>exp</i>: <i>con</i>            constant
+    | [ <b>op</b> ] <i>id</i>     value or constructor identifier
+    | <i>exp<sub>1</sub></i> <i>exp<sub>2</sub></i>      application
+    | <i>exp<sub>1</sub></i> <i>id</i> <i>exp<sub>2</sub></i>   infix application
+    | '(' <i>exp</i> ')'        parentheses
+    | '(' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ')' tuple (n &ne; 1)
+    | '{' <i>expRow</i> '}'   record
+    | '#' <i>lab</i>          record selector
+    | '[' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ']' list (n &ge; 0)
+    | '(' <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> ')' sequence (n &ge; 2)
+    | <b>let</b> <i>dec</i> <b>in</b> <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> <b>end</b> local declaration (n ≥ 1)
+    | <i>exp<sub>1</sub></i> <b>andalso</b> <i>exp<sub>2</sub></i> conjunction
+    | <i>exp<sub>1</sub></i> <b>orelse</b> <i>exp<sub>2</sub></i> disjunction
+    | <b>if</b> <i>exp<sub>1</sub></i> <b>then</b> <i>exp<sub>2</sub></i> <b>else</b> <i>exp<sub>3</sub></i>  conditional
+    | <b>case</b> <i>exp</i> <b>of</b> <i>match</i>   case analysis
+    | <b>fn</b> <i>match</i>       function
+<i>expRow</i>: <i>expRowItem</i> [, <i>exprRowItem</i> ]*  expression row
+<i>expRowItem</i>: [<i>lab</i> '='] <i>exp</i>
+<i>match</i>: <i>matchItem</i> [ '|' <i>matchItem</i> ]*  match
+<i>matchItem<i>: <i>pat</i> '=>' <i>exp</i>
 </pre>
 
 ### Patterns
@@ -154,4 +149,14 @@ conbind ::=     id ⟨of typ⟩ ⟨| conbind⟩         data constructor
 exnbind         ::=     id ⟨of typ⟩ ⟨and exnbind⟩       generative
 id = longid ⟨and exnbind⟩       renaming
 
+
+### Not supported
+* constants: word
+* identifiers: longid
+* expressions: type annotation,
+  `raise` (exception raising),
+  `handle` (exception handling),
+  `while` (iteration)
+* patterns: type annotation,
+  `as` (layered patterns)
 
