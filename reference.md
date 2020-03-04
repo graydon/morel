@@ -100,30 +100,34 @@ License.
 ### Patterns
 
 <pre>
-<i>pat</i>: <i>con</i>            constant
-    | <b>_</b>             wildcard
-    | [ <b>op</b> ] <i>id</i> variable
-    | [ <b>op</b> ] <i>id</i> [ <i>pat</i> ] construction
+<i>pat</i>: <i>con</i>                constant
+    | <b>_</b>                 wildcard
+    | [ <b>op</b> ] <i>id</i>          variable
+    | [ <b>op</b> ] <i>id</i> [ <i>pat</i> ]  construction
     | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i>       infix construction
-    | ( pat )        // parentheses
-    | ( pat1 , ... , patn ) // tuple (n ≠ 1)
+    | ( pat )           parentheses
+    | ( pat1 , ... , patn )
+                         tuple (n &ne; 1)
     | { ⟨patrow⟩ }   // record
-    | [ pat1 , ... , patn ] // list (n ≥ 0)
-patrow ::= ...            // wildcard
-           lab = pat ⟨, patrow⟩ // pattern
-           id ⟨: typ⟩ ⟨as pat⟩ ⟨, patrow⟩ // variable
+    | [ pat1 , ... , patn ]
+                         list (n &ge; 0)
+<i>patrow<i>: '<b>...</b>'            wildcard
+    | <i>lab</i> = <i>pat</i> [, <i>patrow</i>] pattern
+    | <i>id</i> [, <i>patrow</i>] variable
 </pre>
 
 ### Types
 
 <pre>
-typ     ::= var           // variable
-            ⟨typ⟩(,) id   // constructor
-            ( typ )       // parentheses
-            typ1 -> typ2  // function
-            typ1 * ... * typn // tuple (n ≥ 2)
-            { ⟨typrow⟩ }  // record
-typrow  ::= lab : typ ⟨, typrow⟩ // type row
+<i>typ</i>: <i>var</i>             variable
+    | [ <i>typ</i> ] <i>id</i>     constructor
+    | '(' <i>typ</i> [ , <i>typ</i> ]* ')' <i>id</i> constructor
+    | '(' <i>typ</i> ')'           parentheses
+    | <i>typ<sub>1</sub></i> <b>-&gt;</b> <i> <i>typ<sub>2</sub></i> function
+    | <i>typ<sub>1</sub></i> '<b>*</b>' ... '<b>*</b>' <i>typ<sub>n</sub></i>
+                         tuple (n &ge; 2)
+    | { [ <i>typrow</i> ] }  record
+<i>typrow</i>: <i>lab</i> : <i>typ</i> [, <i>typrow</i>] type row
 </pre>
 
 ### Declarations
