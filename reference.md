@@ -26,21 +26,24 @@ License.
 
 ### Constants
 
-<table>
-<tr><td>con</td><td>::=</td><td>int</td><td>integer</td></tr>
-<tr><td>word</td><td>word</td></tr>
-<tr><td>float</td><td>floating</td><td>point</td></tr>
-<tr><td>char</td><td>character</td></tr>
-<tr><td>string</td><td>string</td></tr>
-<tr><td>int</td><td>::=</td><td>⟨~⟩num</td><td>decimal</td></tr>
-<tr><td>⟨~⟩0xhex</td><td>hexadecimal</td></tr>
-<tr><td>word</td><td>::=</td><td>0wnum</td><td>decimal</td></tr>
-<tr><td>0wxhex</td><td>hexadecimal</td></tr>
-<tr><td>float</td><td>::=</td><td>⟨~⟩num.num</td><td>floating</td><td>point</td></tr>
-<tr><td>⟨~⟩num⟨.num⟩e⟨~⟩num</td><td>scientific</td></tr>
-<tr><td>char</td><td>::=</td><td>#"ascii"</td><td>character</td></tr>
-<tr><td>string</td><td>::=</td><td>"⟨ascii⟩*"</td><td>string</td></tr>
-<tr><td>num</td><td>::=</td><td>⟨digit⟩+</td><td>number</td></tr>
-<tr><td>hex</td><td>::=</td><td>⟨digit | letter⟩+</td><td>hexadecimal number (letters may only be in the range A-F)</td></tr>
-<tr><td>ascii</td><td>::=</td><td>...</td><td>single non-" ASCII character or \-headed escape sequence</td></tr>
-</table>
+<pre>
+con    ::= int                 // integer
+           word                // word
+           float               // floating point
+           char                // character
+           string              // string
+int	   ::= ⟨~⟩num              // decimal
+           ⟨~⟩0xhex            // hexadecimal
+word   ::= 0wnum               // decimal
+           0wxhex              // hexadecimal
+float  ::= ⟨~⟩num.num          // floating point
+           ⟨~⟩num⟨.num⟩e⟨~⟩num // scientific
+char   ::= #"ascii"            // character
+string ::= "⟨ascii⟩*"          // string
+num    ::= ⟨digit⟩+            // number
+hex    ::= ⟨digit | letter⟩+   // hexadecimal number (letters may
+                               // only be in the range A-F)
+ascii  ::= ...                 // single non-" ASCII character or
+                               // \-headed escape sequence
+</pre>
+
