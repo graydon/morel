@@ -72,36 +72,43 @@ License.
     | [ <b>op</b> ] <i>id</i>         value or constructor identifier
     | <i>exp<sub>1</sub></i> <i>exp<sub>2</sub></i>          application
     | <i>exp<sub>1</sub></i> <i>id</i> <i>exp<sub>2</sub></i>       infix application
-    | '(' <i>exp</i> ')'        parentheses
-    | '(' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ')' tuple (n &ne; 1)
+    | '(' <i>exp</i> ')'       parentheses
+    | '(' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ')'
+                         tuple (n &ne; 1)
     | '{' <i>expRow</i> '}'   record
     | '#' <i>lab</i>          record selector
-    | '[' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ']' list (n &ge; 0)
-    | '(' <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> ')' sequence (n &ge; 2)
-    | <b>let</b> <i>dec</i> <b>in</b> <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> <b>end</b> local declaration (n ≥ 1)
-    | <i>exp<sub>1</sub></i> <b>andalso</b> <i>exp<sub>2</sub></i> conjunction
-    | <i>exp<sub>1</sub></i> <b>orelse</b> <i>exp<sub>2</sub></i> disjunction
-    | <b>if</b> <i>exp<sub>1</sub></i> <b>then</b> <i>exp<sub>2</sub></i> <b>else</b> <i>exp<sub>3</sub></i>  conditional
-    | <b>case</b> <i>exp</i> <b>of</b> <i>match</i>   case analysis
-    | <b>fn</b> <i>match</i>       function
-<i>expRow</i>: <i>expRowItem</i> [, <i>exprRowItem</i> ]*  expression row
+    | '[' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ']'
+                         list (n &ge; 0)
+    | '(' <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> ')'
+                         sequence (n &ge; 2)
+    | <b>let</b> <i>dec</i> <b>in</b> <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> <b>end</b>
+                         local declaration (n ≥ 1)
+    | <i>exp<sub>1</sub></i> <b>andalso</b> <i>exp<sub>2</sub></i>  conjunction
+    | <i>exp<sub>1</sub></i> <b>orelse</b> <i>exp<sub>2</sub></i>   disjunction
+    | <b>if</b> <i>exp<sub>1</sub></i> <b>then</b> <i>exp<sub>2</sub></i> <b>else</b> <i>exp<sub>3</sub></i>
+                         conditional
+    | <b>case</b> <i>exp</i> <b>of</b> <i>match</i>  case analysis
+    | <b>fn</b> <i>match</i>          function
+<i>expRow</i>: <i>expRowItem</i> [, <i>exprRowItem</i> ]*
+                         expression row
 <i>expRowItem</i>: [<i>lab</i> '='] <i>exp</i>
-<i>match</i>: <i>matchItem</i> [ '|' <i>matchItem</i> ]*  match
+<i>match</i>: <i>matchItem</i> [ '|' <i>matchItem</i> ]*
+                         match
 <i>matchItem<i>: <i>pat</i> '=>' <i>exp</i>
 </pre>
 
 ### Patterns
 
 <pre>
-pat     ::= con           // constant
-            _             // wildcard
-           ⟨op⟩ id        // variable
-           ⟨op⟩ id ⟨pat⟩  // construction
-           pat1 id pat2   // infix construction
-           ( pat )        // parentheses
-           ( pat1 , ... , patn ) // tuple (n ≠ 1)
-           { ⟨patrow⟩ }   // record
-           [ pat1 , ... , patn ] // list (n ≥ 0)
+<i>pat</i>: <i>con</i>            constant
+    | <b>_</b>             wildcard
+    | [ <b>op</b> ] <i>id</i> variable
+    | [ <b>op</b> ] <i>id</i> [ <i>pat</i> ] construction
+    | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i>       infix construction
+    | ( pat )        // parentheses
+    | ( pat1 , ... , patn ) // tuple (n ≠ 1)
+    | { ⟨patrow⟩ }   // record
+    | [ pat1 , ... , patn ] // list (n ≥ 0)
 patrow ::= ...            // wildcard
            lab = pat ⟨, patrow⟩ // pattern
            id ⟨: typ⟩ ⟨as pat⟩ ⟨, patrow⟩ // variable
