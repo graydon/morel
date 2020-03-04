@@ -38,7 +38,7 @@ License.
 <i>float</i>: ['~'] <i>num</i> '.' <i>num</i>      floating point
    | ['~'] <i>num</i> ['.' <i>num</i>] 'e' ['~'] <i>num</i>   scientific
 <i>char</i>: '#"' <i>ascii</i> '"'      character
-<i>string<i>: '"' <i>ascii</i>* '"'       string
+<i>string</i>: '"' <i>ascii</i>* '"'       string
 <i>num</i>: <i>digit</i> <i>digit</i>*             number
 <i>hex</i>: (<i>digit</i> | <i>letter</i>) (<i>digit</i> | <i>letter</i>)* hexadecimal number
                                (letters may only be in the range A-F)
