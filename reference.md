@@ -97,7 +97,7 @@ no 'word'
     | '<b>(</b>' <i>exp</i> '<b>)</b>'         parentheses
     | '<b>(</b>' <i>exp<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>exp<sub>n</sub></i> '<b>)</b>'
                           tuple (n &ne; 1)
-    | <b>{</b> <i>expRow</i> <b>}</b>          record
+    | <b>{</b> [ <i>exprow</i> ] <b>}</b>      record
     | <b>#</b><i>lab</i>                record selector
     | '<b>[</b>' <i>exp<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>exp<sub>n</sub></i> '<b>]</b>'
                           list (n &ge; 0)
@@ -122,33 +122,33 @@ no 'word'
 ### Patterns
 
 <pre>
-<i>pat</i>: <i>con</i>                constant
-    | <b>_</b>                 wildcard
-    | [ <b>op</b> ] <i>id</i>          variable
-    | [ <b>op</b> ] <i>id</i> [ <i>pat</i> ]  construction
-    | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i>       infix construction
-    | ( pat )           parentheses
-    | ( pat1 , ... , patn )
+<i>pat</i>: <i>con</i>                  constant
+    | <b>_</b>                   wildcard
+    | [ <b>op</b> ] <i>id</i>           variable
+    | [ <b>op</b> ] <i>id</i> [ <i>pat</i> ]   construction
+    | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i>         infix construction
+    | '<b>(</b>' pat '<b>)</b>'         parentheses
+    | '<b>(</b>' pat1 , ... , patn '<b>)</b>'
                           tuple (n &ne; 1)
-    | { ⟨patrow⟩ }   // record
-    | [ pat1 , ... , patn ]
+    | <b>{</b> [ <i>patrow</i> ] <b>}</b>      record
+    | [ <i>pat<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>pat<sub>n</sub></i> ]
                           list (n &ge; 0)
-<i>patrow<i>: '<b>...</b>'            wildcard
-    | <i>lab</i> = <i>pat</i> [, <i>patrow</i>] pattern
-    | <i>id</i> [, <i>patrow</i>] variable
+<i>patrow</i>: '<b>...</b>'             wildcard
+    | <i>lab</i> <b>=</b> <i>pat</i> [<b>,</b> <i>patrow</i>] pattern
+    | <i>id</i> [<b>,</b> <i>patrow</i>]       variable
 </pre>
 
 ### Types
 
 <pre>
-<i>typ</i>: <i>var</i>             variable
-    | [ <i>typ</i> ] <i>id</i>     constructor
-    | '(' <i>typ</i> [ , <i>typ</i> ]* ')' <i>id</i> constructor
-    | '(' <i>typ</i> ')'           parentheses
-    | <i>typ<sub>1</sub></i> <b>-&gt;</b> <i> <i>typ<sub>2</sub></i> function
+<i>typ</i>:  <i>var</i>                  variable
+    | [ <i>typ</i> ] <i>id</i>           constructor
+    | '<b>(</b>' <i>typ</i> [<b>,</b> <i>typ</i> ]* '<b>)</b>' <i>id</i> constructor
+    | '(' <i>typ</i> ')'       parentheses
+    | <i>typ<sub>1</sub></i> <b>-&gt;</b> <i>typ<sub>2</sub></i>         function
     | <i>typ<sub>1</sub></i> '<b>*</b>' ... '<b>*</b>' <i>typ<sub>n</sub></i>
                           tuple (n &ge; 2)
-    | { [ <i>typrow</i> ] }  record
+    | <b>{</b> [ <i>typrow</i> ] <b>}</b>  record
 <i>typrow</i>: <i>lab</i> : <i>typ</i> [, <i>typrow</i>] type row
 </pre>
 
