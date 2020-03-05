@@ -25,53 +25,53 @@ License.
 
 ### Constants
 
+no 'word'
+
 <pre>
-<i>con</i>: <i>int</i>                 integer
-   | <i>float</i>               floating point
-   | <i>char</i>                character
-   | <i>string</i>              string
-<i>int</i>: ['~'] <i>num</i>           decimal
-   | ['~'] '0x' <i>hex</i>      hexadecimal
-<i>word</i>: '0w' <i>num</i>           decimal
-   | '0wx'<i>hex</i>            hexadecimal
-<i>float</i>: ['~'] <i>num</i> '.' <i>num</i>  floating point
-   | ['~'] <i>num</i> ['.' <i>num</i>] 'e' ['~'] <i>num</i>
-                         scientific
-<i>char</i>: '#"' <i>ascii</i> '"'     character
-<i>string</i>: '"' <i>ascii</i>* '"'   string
-<i>num</i>: <i>digit</i> <i>digit</i>*        number
-<i>hex</i>: (<i>digit</i> | <i>letter</i>) (<i>digit</i> | <i>letter</i>)*
-                         hexadecimal number (letters may
-                         only be in the range A-F)
-<i>ascii</i>: ...               single non-" ASCII character or
-                         \-headed escape sequence
+<i>con</i>:  <i>int</i>                 integer
+    | <i>float</i>               floating point
+    | <i>char</i>                character
+    | <i>string</i>              string
+<i>int</i>:  ['~']<i>num</i>            decimal
+    | ['~'] '0x' <i>hex</i>      hexadecimal
+<i>float</i>: ['~']<i>num</i>'.'<i>num</i>     floating point
+    | ['~']<i>num</i>['.' <i>num</i>]'e'['~']<i>num</i>
+                          scientific
+<i>char</i>: '#"'<i>ascii</i>'"'        character
+<i>string</i>: '"'<i>ascii</i>*'"'      string
+<i>num</i>:  <i>digit</i> <i>digit</i>*        number
+<i>hex</i>:  (<i>digit</i> | <i>letter</i>) (<i>digit</i> | <i>letter</i>)*
+                          hexadecimal number (letters may
+                          only be in the range A-F)
+<i>ascii</i>: ...                single non-" ASCII character or
+                          \-headed escape sequence
 </pre>
 
 ## Identifiers
 
 <pre>
 <i>id</i>:   <i>letter</i> (<i>letter</i> | <i>digit</i> | ''' | '_')*
-                         alphanumeric
+                          alphanumeric
     | ('!' | '%' | '&' | '$' | '#' | '+' | '-'
       | '/' | ':' | '<' | '=' | '>' | '?' | '@'
       | '\' | '~' | '`' | '^' | '|' | '*')+
-                         symbolic (not allowed for type variables
-                         or module language identifiers)
-<i>var</i>:  ''' (<i>letter</i> | <i>digit</i> | ''' | '_')*
-                         unconstrained
-      '''' (<i>letter</i> | <i>digit</i> | ''' | '_'⟩*
-                         equality
-<i>lab</i>:  <i>id</i>                 identifier
-      <i>num</i>                number (may not start with 0)
+                          symbolic (not allowed for type variables
+                          or module language identifiers)
+<i>var</i>:  '''(<i>letter</i> | <i>digit</i> | ''' | '_')*
+                          unconstrained
+      ''''(<i>letter</i> | <i>digit</i> | ''' | '_'⟩*
+                          equality
+<i>lab</i>:  <i>id</i>                  identifier
+      <i>num</i>                 number (may not start with 0)
 </pre>
 
 ### Expressions
 
 <pre>
-<i>exp</i>: <i>con</i>                constant
-    | [ <b>op</b> ] <i>id</i>         value or constructor identifier
-    | <i>exp<sub>1</sub></i> <i>exp<sub>2</sub></i>          application
-    | <i>exp<sub>1</sub></i> <i>id</i> <i>exp<sub>2</sub></i>       infix application
+<i>exp</i>:  <i>con</i>                 constant
+    | [ <b>op</b> ] <i>id</i>           value or constructor identifier
+    | <i>exp<sub>1</sub></i> <i>exp<sub>2</sub></i>            application
+    | <i>exp<sub>1</sub></i> <i>id</i> <i>exp<sub>2</sub></i>         infix application
     | '(' <i>exp</i> ')'       parentheses
     | '(' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ')'
                          tuple (n &ne; 1)
