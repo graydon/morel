@@ -262,65 +262,11 @@ In this grammar we use the following conventions:
 | List.foldr | (&alpha; * &beta; &rarr; &beta;) &rarr; &beta; &rarr; &alpha; list &rarr; &beta; | "foldr f init \[x1, x2, ..., xn\]" returns `f(x1, f(x2, ..., f(xn, init)...))` or `init` if the list is empty.
 | List.exists | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; bool | "exists f l" applies `f` to each element `x` of the list `l`, from left to right, until `f x` evaluates to `true`; it returns `true` if such an `x` exists and `false` otherwise.
 | List.all | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; bool | "all f l" applies `f` to each element `x` of the list `l`, from left to right, `f x` evaluates to `false`; it returns `false` if such an `x` exists and `true` otherwise. It is equivalent to `not(exists (not o f) l))`.
-
-/** Function "List.tabulate", of type
-   * "int * (int &rarr; &alpha;) &rarr; &alpha; list".
-   *
-   * <p>"tabulate (n, f)" returns a list of length n equal to
-   * {@code [f(0), f(1), ..., f(n-1)]}, created from left to right. It raises
-   * {@code Size} if n &lt; 0.
-   */
-  LIST_TABULATE("List.tabulate", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(ts.tupleType(INT, ts.fnType(INT, h.get(0))), h.list(0)))),
-
-  /** Function "List.collate", of type "(&alpha; * &alpha; &rarr; order)
-   * &rarr; &alpha; list * &alpha; list &rarr; order".
-   *
-   * <p>"collate f (l1, l2)" performs lexicographic comparison of the two lists
-   * using the given ordering f on the list elements.
-   */
-  LIST_COLLATE("List.collate", ts -> {
-    final Type order = INT; // TODO:
-    return ts.forallType(1, h ->
-        ts.fnType(ts.fnType(ts.tupleType(h.get(0), h.get(0)), order),
-            ts.tupleType(h.list(0), h.list(0)),
-            order));
-  }),
-
-  /** Function "Relational.count", aka "count", of type "int list &rarr; int".
-   *
-   * <p>Often used with {@code group}:
-   *
-   * <blockquote>
-   *   <pre>
-   *     from e in emps
-   *     group (#deptno e) as deptno
-   *       compute sum of (#id e) as sumId
-   *   </pre>
-   * </blockquote>
-   */
-  RELATIONAL_COUNT("Relational.count", "count", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), INT))),
-
-  /** Function "Relational.sum", aka "sum", of type "int list &rarr; int".
-   *
-   * <p>Often used with {@code group}:
-   *
-   * <blockquote>
-   *   <pre>
-   *     from e in emps
-   *     group (#deptno e) as deptno
-   *       compute sum of (#id e) as sumId
-   *   </pre>
-   * </blockquote>
-   */
-  RELATIONAL_SUM("Relational.sum", "sum", ts ->
-      ts.fnType(ts.listType(INT), INT)),
-
-  /** Function "Sys.env", aka "env", of type "unit &rarr; string list". */
-  SYS_ENV("Sys.env", "env", ts ->
-      ts.fnType(UNIT, ts.listType(ts.tupleType(STRING, STRING))));
+| List.tabulate | int * (int &rarr; &alpha;) &rarr; &alpha; list | "tabulate (n, f)" returns a list of length `n` equal to `[f(0), f(1), ..., f(n-1)]`, created from left to right. It raises `Size` if `n` &lt; 0.
+| List.collate | (&alpha; * &alpha; &rarr; order) &rarr; &alpha; list * &alpha; list &rarr; order | "collate f (l1, l2)" performs lexicographic comparison of the two lists using the given ordering `f` on the list elements.
+| Relational.count, count | int list &rarr; int | Often used with `group`:<br><br><code>from e in emps<br>&nbsp; group e.deptno<br>&nbsp; compute count as countId</code>
+| Relational.sum, sum| int list &rarr; int | Often used with `group`:<br><br><code>from e in emps<br>&nbsp; group e.deptno<br>&nbsp; compute sum of e.id as sumId</code>
+| Sys.env, env | unit &rarr; string list | Prints the environment
 
 ### Differences between Morel and SML
 
