@@ -23,6 +23,11 @@ License.
 
 ## Grammar
 
+meta-syntax:
+* meta-characters are ()[]|*; others are not quoted
+* italics for symbols, e.g. <i>con</i>
+* bold for keywords and operators, e.g. <b>if</b>, <b>~</b>
+
 ### Constants
 
 no 'word'
@@ -32,13 +37,13 @@ no 'word'
     | <i>float</i>               floating point
     | <i>char</i>                character
     | <i>string</i>              string
-<i>int</i>:  ['~']<i>num</i>            decimal
-    | ['~'] '0x' <i>hex</i>      hexadecimal
-<i>float</i>: ['~']<i>num</i>'.'<i>num</i>     floating point
-    | ['~']<i>num</i>['.' <i>num</i>]'e'['~']<i>num</i>
+<i>int</i>:  [<b>~</b>]<i>num</i>              decimal
+    | [<b>~</b>]<b>0x</b><i>hex</i>            hexadecimal
+<i>float</i>: [<b>~</b>]<i>num</i><b>.</b><i>num</i>         floating point
+    | [<b>~</b>]<i>num</i>[<b>.</b><i>num</i>]<b>e</b>[<b>~</b>]<i>num</i>
                           scientific
-<i>char</i>: '#"'<i>ascii</i>'"'        character
-<i>string</i>: '"'<i>ascii</i>*'"'      string
+<i>char</i>: <b>#"</b><i>ascii</i><b>"</b>            character
+<i>string</i>: <b>"</b><i>ascii</i>*<b>"</b>          string
 <i>num</i>:  <i>digit</i> <i>digit</i>*        number
 <i>hex</i>:  (<i>digit</i> | <i>letter</i>) (<i>digit</i> | <i>letter</i>)*
                           hexadecimal number (letters may
@@ -52,11 +57,29 @@ no 'word'
 <pre>
 <i>id</i>:   <i>letter</i> (<i>letter</i> | <i>digit</i> | ''' | '_')*
                           alphanumeric
-    | ('!' | '%' | '&' | '$' | '#' | '+' | '-'
-      | '/' | ':' | '<' | '=' | '>' | '?' | '@'
-      | '\' | '~' | '`' | '^' | '|' | '*')+
+    | <i>symbol</i> <i>symbol</i>*
                           symbolic (not allowed for type variables
                           or module language identifiers)
+<i>symbol</i>: <b>!</b>
+    | <b>%</b>
+    | <b>&amp;</b>
+    | <b>$</b>
+    | <b>#</b>
+    | <b>+</b>
+    | <b>-</b>
+    | <b>/</b>
+    | <b>:</b>
+    | <b>&lt;</b>
+    | <b>=</b>
+    | <b>&gt;</b>
+    | <b>?</b>
+    | <b>@</b>
+    | <b>\</b>
+    | <b>~</b>
+    | <b>`</b>
+    | <b>^</b>
+    | '<b>|</b>'
+    | '<b>*</b>'
 <i>var</i>:  '''(<i>letter</i> | <i>digit</i> | ''' | '_')*
                           unconstrained
       ''''(<i>letter</i> | <i>digit</i> | ''' | '_'⟩*
