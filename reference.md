@@ -226,127 +226,24 @@ In this grammar we use the following conventions:
 | String.maxSize | int | The longest allowed size of a string
 | String.size | string &rarr; int | "size s" returns \|s\|, the number of characters in string s
 | String.sub | string * int &rarr; char | "sub (s, i)" returns the i(th) character of s, counting from zero. This raises `Subscript` if i &lt; 0 or \|s\| &le; i
-| String.extract | string * int * int option &rarr; string | "extract (s, i, NONE)" and "extract (s, i, SOME j)" return substrings of s. The first returns the substring of s from the i(th) character to the end of the string, i.e., the string s\[i..\|s\|-1\]. This raises `code Subscript` if i &lt; 0 * or |s| &lt; i. The second form returns the substring of size j starting at index i, i.e., the string s\[i..i+j-1\]. It raises `Subscript` if i &lt; 0 or j &lt; 0 or \|s\| &lt; i + j. Note that, if defined, extract returns the empty string when i = \|s\|.
+| String.extract | string * int * int option &rarr; string | "extract (s, i, NONE)" and "extract (s, i, SOME j)" return substrings of s. The first returns the substring of s from the i(th) character to the end of the string, i.e., the string s\[i..\|s\|-1\]. This raises `Subscript` if i &lt; 0 or \|s\| &lt; i.<br><br>The second form returns the substring of size j starting at index i, i.e., the string s\[i..i+j-1\]. It raises `Subscript` if i &lt; 0 or j &lt; 0 or \|s\| &lt; i + j. Note that, if defined, `extract` returns the empty string when i = \|s\|.
 | String.substring | string * int * int &rarr; string | "substring (s, i, j)" returns the substring s\[i..i+j-1\], i.e., the substring of size j starting at index i. This is equivalent to extract(s, i, SOME j).
-
-
-  /** Function "String.concat", of type "string list &rarr; string".
-   *
-   * <p>"concat l" is the concatenation of all the strings in l. This raises
-   * {@code Size} if the sum of all the sizes is greater than maxSize.  */
-  STRING_CONCAT("String.concat", ts -> ts.fnType(ts.listType(STRING), STRING)),
-
-  /** Function "String.concatWith", of type "string &rarr; string list &rarr;
-   * string".
-   *
-   * <p>"concatWith s l" returns the concatenation of the strings in the list l
-   * using the string s as a separator. This raises {@code Size} if the size of
-   * the resulting string would be greater than maxSize. */
-  STRING_CONCAT_WITH("String.concatWith", ts ->
-      ts.fnType(STRING, ts.listType(STRING), STRING)),
-
-  /** Function "String.str", of type "char &rarr; string".
-   *
-   * <p>"str c" is the string of size one containing the character c. */
-  STRING_STR("String.str", ts -> ts.fnType(CHAR, STRING)),
-
-  /** Function "String.implode", of type "char list &rarr; string".
-   *
-   * <p>"implode l" generates the string containing the characters in the list
-   * l. This is equivalent to concat (List.map str l). This raises {@code Size}
-   * if the resulting string would have size greater than maxSize. */
-  STRING_IMPLODE("String.implode", ts -> ts.fnType(ts.listType(CHAR), STRING)),
-
-  /** Function "String.explode", of type "string &rarr; char list".
-   *
-   * <p>"explode s" is the list of characters in the string s. */
-  STRING_EXPLODE("String.explode", ts -> ts.fnType(STRING, ts.listType(CHAR))),
-
-  /** Function "String.map", of type "(char &rarr; char) &rarr; string
-   * &rarr; string".
-   *
-   * <p>"map f s" applies f to each element of s from left to right, returning
-   * the resulting string. It is equivalent to
-   * {@code implode(List.map f (explode s))}.  */
-  STRING_MAP("String.map", ts ->
-      ts.fnType(ts.fnType(CHAR, CHAR), STRING, STRING)),
-
-  /** Function "String.translate", of type "(char &rarr; string) &rarr; string
-   * &rarr; string".
-   *
-   * <p>"translate f s" returns the string generated from s by mapping each
-   * character in s by f. It is equivalent to
-   * {code concat(List.map f (explode s))}. */
-  STRING_TRANSLATE("String.translate", ts ->
-      ts.fnType(ts.fnType(CHAR, STRING), STRING, STRING)),
-
-  /** Function "String.isPrefix", of type "string &rarr; string &rarr; bool".
-   *
-   * <p>"isPrefix s1 s2" returns true if the string s1 is a prefix of the string
-   * s2. Note that the empty string is a prefix of any string, and that a string
-   * is a prefix of itself. */
-  STRING_IS_PREFIX("String.isPrefix", ts -> ts.fnType(STRING, STRING, BOOL)),
-
-  /** Function "String.isSubstring", of type "string &rarr; string &rarr; bool".
-   *
-   * <p>"isSubstring s1 s2" returns true if the string s1 is a substring of the
-   * string s2. Note that the empty string is a substring of any string, and
-   * that a string is a substring of itself. */
-  STRING_IS_SUBSTRING("String.isSubstring", ts ->
-      ts.fnType(STRING, STRING, BOOL)),
-
-  /** Function "String.isSuffix", of type "string &rarr; string &rarr; bool".
-   *
-   * <p>"isSuffix s1 s2" returns true if the string s1 is a suffix of the string
-   * s2. Note that the empty string is a suffix of any string, and that a string
-   * is a suffix of itself. */
-  STRING_IS_SUFFIX("String.isSuffix", ts -> ts.fnType(STRING, STRING, BOOL)),
-
-  /** Constant "List.nil", of type "&alpha; list".
-   *
-   * <p>"nil" is the empty list.
-   */
-  LIST_NIL("List.nil", ts -> ts.forallType(1, h -> h.list(0))),
-
-  /** Function "List.null", of type "&alpha; list &rarr; bool".
-   *
-   * <p>"null l" returns true if the list l is empty.
-   */
-  LIST_NULL("List.null", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), BOOL))),
-
-  /** Function "List.length", of type "&alpha; list &rarr; int".
-   *
-   * <p>"length l" returns the number of elements in the list l.
-   */
-  LIST_LENGTH("List.length", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), INT))),
-
-  /** Function "List.at", of type "&alpha; list * &alpha; list &rarr; &alpha;
-   * list".
-   *
-   * <p>"l1 @ l2" returns the list that is the concatenation of l1 and l2.
-   */
-  // TODO: make this infix "@" rather than prefix "at"
-  LIST_AT("List.at", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(ts.tupleType(h.list(0), h.list(0)), h.list(0)))),
-
-  /** Function "List.hd", of type "&alpha; list &rarr; &alpha;".
-   *
-   * <p>"hd l" returns the first element of l. It raises {@code Empty} if l is
-   * nil.
-   */
-  LIST_HD("List.hd", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), h.get(0)))),
-
-  /** Function "List.tl", of type "&alpha; list &rarr; &alpha; list".
-   *
-   * <p>"tl l" returns all but the first element of l. It raises {@code Empty}
-   * if l is nil.
-   */
-  LIST_TL("List.tl", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), h.list(0)))),
+| String.concat | string list &rarr; string | "concat l" is the concatenation of all the strings in l. This raises `Size` if the sum of all the sizes is greater than maxSize.
+| String.concatWith | string &rarr; string list &rarr; string | "concatWith s l" returns the concatenation of the strings in the list `l` using the string `s` as a separator. This raises `Size` if the size of the resulting string would be greater than `maxSize`.
+| String.str | char &rarr; string | "str c" is the string of size one containing the character `c`
+| String.implode | char list &rarr; string | "implode l" generates the string containing the characters in the list `l`. This is equivalent to `concat (List.map str l)`. This raises `Size` if the resulting string would have size greater than `maxSize`.
+| String.explode | string &rarr; char list | "explode s" is the list of characters in the string `s`.
+| String.map | (char &rarr; char) &rarr; string &rarr; string | "map f s" applies `f` to each element of `s` from left to right, returning the resulting string. It is equivalent to `implode(List.map f (explode s))`.
+| String.translate | (char &rarr; string) &rarr; string &rarr; string | "translate f s" returns the string generated from `s` by mapping each character in `s` by `f`. It is equivalent to `concat(List.map f (explode s))`.
+| String.isPrefix | string &rarr; string &rarr; bool | "isPrefix s1 s2" returns `true` if the string `s1` is a prefix of the string `s2`. Note that the empty string is a prefix of any string, and that a string is a prefix of itself.
+| String.isSubstring | string &rarr; string &rarr; bool | "isSubstring s1 s2" returns `true` if the string `s1` is a substring of the string `s2`. Note that the empty string is a substring of any string, and that a string is a substring of itself.
+| String.isSuffix | string &rarr; string &rarr; bool | "isSuffix s1 s2" returns `true` if the string `s1` is a suffix of the string `s2`. Note that the empty string is a suffix of any string, and that a string is a suffix of itself.
+| List.nil | &alpha; list | "nil" is the empty list.
+| List.null | &alpha; list &rarr; bool | "null l" returns `true` if the list `l` is empty.
+| List.length | &alpha; list &rarr; int | "length l" returns the number of elements in the list `l`.
+| List.at | &alpha; list * &alpha; list &rarr; &alpha; list | "l1 @ l2" returns the list that is the concatenation of `l1` and `l2`.
+| List.hd | &alpha; list &rarr; &alpha; | "hd l" returns the first element of `l`. It raises `Empty` if `l` is `nil`.
+| List.tl | &alpha; list &rarr; &alpha; list | "tl l" returns all but the first element of `l`. It raises `Empty` if `l` is `nil`.
 
   /** Function "List.last", of type "&alpha; list &rarr; &alpha;".
    *
