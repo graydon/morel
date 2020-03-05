@@ -141,47 +141,46 @@ no 'word'
 ### Types
 
 <pre>
-<i>typ</i>:  <i>var</i>                  variable
-    | [ <i>typ</i> ] <i>id</i>           constructor
-    | '<b>(</b>' <i>typ</i> [<b>,</b> <i>typ</i> ]* '<b>)</b>' <i>id</i> constructor
-    | '(' <i>typ</i> ')'       parentheses
-    | <i>typ<sub>1</sub></i> <b>-&gt;</b> <i>typ<sub>2</sub></i>         function
+<i>typ</i>:  <i>var</i>                 variable
+    | [ <i>typ</i> ] <i>id</i>          constructor
+    | '<b>(</b>' <i>typ</i> [<b>,</b> <i>typ</i> ]* '<b>)</b>' <i>id</i>
+                          constructor
+    | '<b>(</b>' <i>typ</i> '<b>)</b>'         parentheses
+    | <i>typ<sub>1</sub></i> <b>-&gt;</b> <i>typ<sub>2</sub></i>        function
     | <i>typ<sub>1</sub></i> '<b>*</b>' ... '<b>*</b>' <i>typ<sub>n</sub></i>
                           tuple (n &ge; 2)
-    | <b>{</b> [ <i>typrow</i> ] <b>}</b>  record
+    | <b>{</b> [ <i>typrow</i> ] <b>}</b>      record
 <i>typrow</i>: <i>lab</i> : <i>typ</i> [, <i>typrow</i>] type row
 </pre>
 
 ### Declarations
 
-not supported: `type`, `withtype` in `datatype`, data type replication, `abstype` (abstract type)
+not supported: `type`, `withtype` in `datatype`, data type replication, `abstype` (abstract type), `structure`, `local`, `open`, `nonfix`, `infix`, `infixr`
 
 <pre>
-dec     ::= val ⟨var⟩(,) valbind // value
-            fun ⟨var⟩(,) funbind // function
-            type typbind  // type
-            datatype datbind // data type
-abstype datbind ⟨withtype typbind⟩ with dec end abstract type
-exception exnbind       exception
-structure strbind       structure (not allowed inside expressions)
-empty
-dec1 ⟨;⟩ dec2   sequence
-local dec1 in dec2 end  local
-open longid1 ... longidn        inclusion (n ≥ 1)
-nonfix id1 ... idn      nonfix (n ≥ 1)
-infix ⟨digit⟩ id1 ... idn       left-associative infix (n ≥ 1)
-infixr ⟨digit⟩ id1 ... idn      right-associative infix (n ≥ 1)
-valbind ::=     pat = exp ⟨and valbind⟩ destructuring
-rec valbind     recursive
-funbind ::=     funmatch ⟨and funbind⟩  clausal function
-funmatch        ::=     ⟨op⟩ id pat1 ... patn ⟨: typ⟩ = exp ⟨| funmatch⟩        nonfix (n ≥ 1)
-pat1 id pat2 ⟨: typ⟩ = exp ⟨| funmatch⟩ infix
-( pat1 id pat2 ) pat'1 ... pat'n ⟨: typ⟩ = exp ⟨| funmatch⟩     infix (n ≥ 0)
-typbind ::=     ⟨var⟩(,) id = typ ⟨and typbind⟩ abbreviation
-datbind ::=     ⟨var⟩(,) id = conbind ⟨and datbind⟩     data type
-conbind ::=     id ⟨of typ⟩ ⟨| conbind⟩         data constructor
-exnbind         ::=     id ⟨of typ⟩ ⟨and exnbind⟩       generative
-id = longid ⟨and exnbind⟩       renaming
+<i>dec</i>:  <i>vals</i> <i>valbind</i>     value
+    | <b>fun</b> <i>vars</i> <i>funbind</i>  function
+    | <b>datatype</b> <i>datbind</i>  data type
+    | <i>empty</i>
+    | <i>dec<sub>1</sub></i> [<b>;</b>] <i>dec<sub>2</sub></i>   sequence
+<i>valbind</i>: <i>pat</i> <b>=</b> <i>exp</i> [ <b>and</b> <i>valbind</i> ]... destructuring
+    | <b>rec</b> <i>valbind</i>     recursive
+<i>funbind</i>: <i>funmatch</i> [ <b>and</b> <i>funmatch</i> ]...  clausal function
+<i>funmatch</i>: <i>funmatchItem</i> [ '<b>|</b>' funmatchItem ]...
+<i>funmatchItem</i>: [ <b>op</b> ] <i>id</i> <i>pat<sub>1</sub></i> ... <i>pat<sub>n</sub></i> <b>=</b> <i>exp</i>
+                          nonfix (n &ge; 1)
+    | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i> <b>=</b> <i>exp</i>
+                          infix
+    | '<b>(</b>' <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i> ) <i>pat'<sub>1</sub></i> ... <i>pat'<sub>n</sub></i> = <i>exp</i>
+                          infix (n &ge; 0)
+<i>datbind</i>: <i>datbindItem</i> [ <b>and</b> <i>datbindItem</b> ]...    data type
+<i>datbindItem</i>: <i>vars</i> <i>id</i> <b>=</b> <i>conbind</i>
+<i>conbind</i>: <i>conbindItem</i> [ '<b>|</b>' <i>conbindItem</i> ]...  data constructor
+<i>conbindItem</i>: <i>id</i> [ <b>of</b> <i>typ</i> ]
+<i>vals</i>: <i>val</i>
+    | '<b>(</b>' <i>val</i> [<b>,</b> <i>val</i>]* '<b>)</b>'
+<i>vars</i>: <i>var</i>
+    | '<b>(</b>' <i>var</i> [<b>,</b> <i>var</i>]* '<b>)</b>'
 
 
 ### Not supported
@@ -193,4 +192,4 @@ id = longid ⟨and exnbind⟩       renaming
   `while` (iteration)
 * patterns: type annotation,
   `as` (layered patterns)
-
+* type annotation (`: typ` in *funmatch* and elsewhere)
