@@ -23,14 +23,19 @@ License.
 
 ## Grammar
 
-meta-syntax:
-* meta-characters are ()[]|*; others are not quoted
-* italics for symbols, e.g. <i>con</i>
-* bold for keywords and operators, e.g. <b>if</b>, <b>~</b>
+### Meta-syntax
+
+In this grammar we use the following conventions:
+
+| Syntax      | Meaning
+| ----------- | -------
+| *symbol*    | Grammar symbol (e.g. *con*)
+| **keyword** | Morel keyword (e.g. **if**) and symbol (e.g. **~**, "**(**")
+| \[ term \]  | Option: term may occur 0 or 1 times
+| term*       | Repetition: term may occur 0 or more times
+| 's'         | Quotation: Symbols used in the grammar &mdash; ( ) \[ \] \| * ... &mdash; are quoted when they appear in Morel language
 
 ### Constants
-
-no 'word'
 
 <pre>
 <i>con</i>:  <i>int</i>                 integer
@@ -127,11 +132,11 @@ no 'word'
     | [ <b>op</b> ] <i>id</i>           variable
     | [ <b>op</b> ] <i>id</i> [ <i>pat</i> ]   construction
     | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i>         infix construction
-    | '<b>(</b>' pat '<b>)</b>'         parentheses
-    | '<b>(</b>' pat1 , ... , patn '<b>)</b>'
+    | '<b>(</b>' <i>pat</i> '<b>)</b>'         parentheses
+    | '<b>(</b>' <i>pat<sub>1</sub></i> , ... , <i>pat<sub>n</sub></i> '<b>)</b>'
                           tuple (n &ne; 1)
     | <b>{</b> [ <i>patrow</i> ] <b>}</b>      record
-    | [ <i>pat<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>pat<sub>n</sub></i> ]
+    | '<b>[</b>' <i>pat<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>pat<sub>n</sub></i> '<b>]</b>'
                           list (n &ge; 0)
 <i>patrow</i>: '<b>...</b>'             wildcard
     | <i>lab</i> <b>=</b> <i>pat</i> [<b>,</b> <i>patrow</i>] pattern
@@ -150,12 +155,11 @@ no 'word'
     | <i>typ<sub>1</sub></i> '<b>*</b>' ... '<b>*</b>' <i>typ<sub>n</sub></i>
                           tuple (n &ge; 2)
     | <b>{</b> [ <i>typrow</i> ] <b>}</b>      record
-<i>typrow</i>: <i>lab</i> : <i>typ</i> [, <i>typrow</i>] type row
+<i>typrow</i>: <i>lab</i> : <i>typ</i> [, <i>typrow</i>]
+                          type row
 </pre>
 
 ### Declarations
-
-not supported: `type`, `withtype` in `datatype`, data type replication, `abstype` (abstract type), `structure`, `local`, `open`, `nonfix`, `infix`, `infixr`
 
 <pre>
 <i>dec</i>:  <i>vals</i> <i>valbind</i>        value
@@ -163,22 +167,22 @@ not supported: `type`, `withtype` in `datatype`, data type replication, `abstype
     | <b>datatype</b> <i>datbind</i>    data type
     | <i>empty</i>
     | <i>dec<sub>1</sub></i> [<b>;</b>] <i>dec<sub>2</sub></i>        sequence
-<i>valbind</i>: <i>pat</i> <b>=</b> <i>exp</i> [ <b>and</b> <i>valbind</i> ]...
+<i>valbind</i>: <i>pat</i> <b>=</b> <i>exp</i> [ <b>and</b> <i>valbind</i> ]*
                           destructuring
     | <b>rec</b> <i>valbind</i>         recursive
-<i>funbind</i>: <i>funmatch</i> [ <b>and</b> <i>funmatch</i> ]...
+<i>funbind</i>: <i>funmatch</i> [ <b>and</b> <i>funmatch</i> ]*
                           clausal function
-<i>funmatch</i>: <i>funmatchItem</i> [ '<b>|</b>' funmatchItem ]...
+<i>funmatch</i>: <i>funmatchItem</i> [ '<b>|</b>' funmatchItem ]*
 <i>funmatchItem</i>: [ <b>op</b> ] <i>id</i> <i>pat<sub>1</sub></i> ... <i>pat<sub>n</sub></i> <b>=</b> <i>exp</i>
                           nonfix (n &ge; 1)
     | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i> <b>=</b> <i>exp</i>
                           infix
-    | '<b>(</b>' <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i> ) <i>pat'<sub>1</sub></i> ... <i>pat'<sub>n</sub></i> = <i>exp</i>
+    | '<b>(</b>' <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i> '<b>)</b>' <i>pat'<sub>1</sub></i> ... <i>pat'<sub>n</sub></i> = <i>exp</i>
                           infix (n &ge; 0)
-<i>datbind</i>: <i>datbindItem</i> [ <b>and</b> <i>datbindItem</i> ]...
+<i>datbind</i>: <i>datbindItem</i> [ <b>and</b> <i>datbindItem</i> ]*
                           data type
 <i>datbindItem</i>: <i>vars</i> <i>id</i> <b>=</b> <i>conbind</i>
-<i>conbind</i>: <i>conbindItem</i> [ '<b>|</b>' <i>conbindItem</i> ]...
+<i>conbind</i>: <i>conbindItem</i> [ '<b>|</b>' <i>conbindItem</i> ]*
                           data constructor
 <i>conbindItem</i>: <i>id</i> [ <b>of</b> <i>typ</i> ]
 <i>vals</i>: <i>val</i>
@@ -192,11 +196,18 @@ not supported: `type`, `withtype` in `datatype`, data type replication, `abstype
 In Standard ML but not in Morel:
 * `word` constant
 * `longid` identifier
-* type annotations ("`:` *typ*") (appears in expressions, patterns, and <i>funmatch</i>)
+* type annotations ("`:` *typ*") (appears in expressions, patterns, and *funmatch*)
 * `longid` identifier
 * exceptions (`raise`, `handle`, `exception`)
 * `while` loop
 * `as` (layered patterns)
+* data type replication (`type`)
+* `withtype` in `datatype` declaration
+* abstract type (`abstype`)
+* modules (`structure` and `signature`)
+* local declarations (`local`)
+* operator declarations (`nonfix`, `infix`, `infixr`)
+* `open`
 
 In Morel but not Standard ML:
 * `from` expression
