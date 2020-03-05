@@ -158,14 +158,16 @@ no 'word'
 not supported: `type`, `withtype` in `datatype`, data type replication, `abstype` (abstract type), `structure`, `local`, `open`, `nonfix`, `infix`, `infixr`
 
 <pre>
-<i>dec</i>:  <i>vals</i> <i>valbind</i>     value
-    | <b>fun</b> <i>vars</i> <i>funbind</i>  function
-    | <b>datatype</b> <i>datbind</i>  data type
+<i>dec</i>:  <i>vals</i> <i>valbind</i>        value
+    | <b>fun</b> <i>vars</i> <i>funbind</i>    function
+    | <b>datatype</b> <i>datbind</i>    data type
     | <i>empty</i>
-    | <i>dec<sub>1</sub></i> [<b>;</b>] <i>dec<sub>2</sub></i>   sequence
-<i>valbind</i>: <i>pat</i> <b>=</b> <i>exp</i> [ <b>and</b> <i>valbind</i> ]... destructuring
-    | <b>rec</b> <i>valbind</i>     recursive
-<i>funbind</i>: <i>funmatch</i> [ <b>and</b> <i>funmatch</i> ]...  clausal function
+    | <i>dec<sub>1</sub></i> [<b>;</b>] <i>dec<sub>2</sub></i>        sequence
+<i>valbind</i>: <i>pat</i> <b>=</b> <i>exp</i> [ <b>and</b> <i>valbind</i> ]...
+                          destructuring
+    | <b>rec</b> <i>valbind</i>         recursive
+<i>funbind</i>: <i>funmatch</i> [ <b>and</b> <i>funmatch</i> ]...
+                          clausal function
 <i>funmatch</i>: <i>funmatchItem</i> [ '<b>|</b>' funmatchItem ]...
 <i>funmatchItem</i>: [ <b>op</b> ] <i>id</i> <i>pat<sub>1</sub></i> ... <i>pat<sub>n</sub></i> <b>=</b> <i>exp</i>
                           nonfix (n &ge; 1)
@@ -173,23 +175,29 @@ not supported: `type`, `withtype` in `datatype`, data type replication, `abstype
                           infix
     | '<b>(</b>' <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i> ) <i>pat'<sub>1</sub></i> ... <i>pat'<sub>n</sub></i> = <i>exp</i>
                           infix (n &ge; 0)
-<i>datbind</i>: <i>datbindItem</i> [ <b>and</b> <i>datbindItem</b> ]...    data type
+<i>datbind</i>: <i>datbindItem</i> [ <b>and</b> <i>datbindItem</i> ]...
+                          data type
 <i>datbindItem</i>: <i>vars</i> <i>id</i> <b>=</b> <i>conbind</i>
-<i>conbind</i>: <i>conbindItem</i> [ '<b>|</b>' <i>conbindItem</i> ]...  data constructor
+<i>conbind</i>: <i>conbindItem</i> [ '<b>|</b>' <i>conbindItem</i> ]...
+                          data constructor
 <i>conbindItem</i>: <i>id</i> [ <b>of</b> <i>typ</i> ]
 <i>vals</i>: <i>val</i>
     | '<b>(</b>' <i>val</i> [<b>,</b> <i>val</i>]* '<b>)</b>'
 <i>vars</i>: <i>var</i>
     | '<b>(</b>' <i>var</i> [<b>,</b> <i>var</i>]* '<b>)</b>'
+</pre>
 
+### Differences between Morel and SML
 
-### Not supported
-* constants: word
-* identifiers: longid
-* expressions: type annotation,
-  `raise` (exception raising),
-  `handle` (exception handling),
-  `while` (iteration)
-* patterns: type annotation,
-  `as` (layered patterns)
-* type annotation (`: typ` in *funmatch* and elsewhere)
+In Standard ML but not in Morel:
+* `word` constant
+* `longid` identifier
+* type annotations ("`:` *typ*") (appears in expressions, patterns, and <i>funmatch</i>)
+* `longid` identifier
+* exceptions (`raise`, `handle`, `exception`)
+* `while` loop
+* `as` (layered patterns)
+
+In Morel but not Standard ML:
+* `from` expression
+* "*lab* `=`" is optional in `exprow`
