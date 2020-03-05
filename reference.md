@@ -94,10 +94,10 @@ no 'word'
     | [ <b>op</b> ] <i>id</i>           value or constructor identifier
     | <i>exp<sub>1</sub></i> <i>exp<sub>2</sub></i>            application
     | <i>exp<sub>1</sub></i> <i>id</i> <i>exp<sub>2</sub></i>         infix application
-    | '<b>(</b>' <i>exp</i> '<b>)</b>'           parentheses
+    | '<b>(</b>' <i>exp</i> '<b>)</b>'         parentheses
     | '<b>(</b>' <i>exp<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>exp<sub>n</sub></i> '<b>)</b>'
-                         tuple (n &ne; 1)
-    | <b>{</b> <i>expRow</i> <b>}</b>           record
+                          tuple (n &ne; 1)
+    | <b>{</b> <i>expRow</i> <b>}</b>          record
     | <b>#</b><i>lab</i>                record selector
     | '<b>[</b>' <i>exp<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>exp<sub>n</sub></i> '<b>]</b>'
                           list (n &ge; 0)
@@ -116,7 +116,7 @@ no 'word'
 <i>exprowItem</i>: [<i>lab</i> <b>=</b>] <i>exp</i>
 <i>match</i>: <i>matchItem</i> [ '<b>|</b>' <i>matchItem</i> ]*
                           match
-<i>matchItem<i>: <i>pat</i> <b>=&gt;</b> <i>exp</i>
+<i>matchItem</i>: <i>pat</i> <b>=&gt;</b> <i>exp</i>
 </pre>
 
 ### Patterns
@@ -129,10 +129,10 @@ no 'word'
     | <i>pat<sub>1</sub></i> <i>id</i> <i>pat<sub>2</sub></i>       infix construction
     | ( pat )           parentheses
     | ( pat1 , ... , patn )
-                         tuple (n &ne; 1)
+                          tuple (n &ne; 1)
     | { ⟨patrow⟩ }   // record
     | [ pat1 , ... , patn ]
-                         list (n &ge; 0)
+                          list (n &ge; 0)
 <i>patrow<i>: '<b>...</b>'            wildcard
     | <i>lab</i> = <i>pat</i> [, <i>patrow</i>] pattern
     | <i>id</i> [, <i>patrow</i>] variable
@@ -147,7 +147,7 @@ no 'word'
     | '(' <i>typ</i> ')'           parentheses
     | <i>typ<sub>1</sub></i> <b>-&gt;</b> <i> <i>typ<sub>2</sub></i> function
     | <i>typ<sub>1</sub></i> '<b>*</b>' ... '<b>*</b>' <i>typ<sub>n</sub></i>
-                         tuple (n &ge; 2)
+                          tuple (n &ge; 2)
     | { [ <i>typrow</i> ] }  record
 <i>typrow</i>: <i>lab</i> : <i>typ</i> [, <i>typrow</i>] type row
 </pre>
