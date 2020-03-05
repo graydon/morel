@@ -244,202 +244,26 @@ In this grammar we use the following conventions:
 | List.at | &alpha; list * &alpha; list &rarr; &alpha; list | "l1 @ l2" returns the list that is the concatenation of `l1` and `l2`.
 | List.hd | &alpha; list &rarr; &alpha; | "hd l" returns the first element of `l`. It raises `Empty` if `l` is `nil`.
 | List.tl | &alpha; list &rarr; &alpha; list | "tl l" returns all but the first element of `l`. It raises `Empty` if `l` is `nil`.
+| List.last | &alpha; list &rarr; &alpha; | "last l" returns the last element of `l`. It raises `Empty` if `l` is `nil`.
+| List.getItem | &alpha; list &rarr; * (&alpha; * &alpha; list) option | "getItem l" returns `NONE` if the `list` is empty, and `SOME(hd l,tl l)` otherwise. This function is particularly useful for creating value readers from lists of characters. For example, `Int.scan StringCvt.DEC getItem` has the type `(int, char list) StringCvt.reader` and can be used to scan decimal integers from lists of characters
+| List.nth | &alpha; list * int &rarr; &alpha; | "nth (l, i)" returns the `i`(th) element of the list `l`, counting from 0. It raises `Subscript` if `i` &lt; 0 or `i` &ge; `length l`. We have `nth(l, 0)` = `hd l`, ignoring exceptions.
+| List.take | &alpha; list * int &rarr; &alpha; list | "take (l, i)" returns the first `i` elements of the list `l`. It raises `Subscript` if `i` &lt; 0 or `i` &gt; `length l`. We have `take(l, length l)` = `l`.
+| List.drop | &alpha; list * int &rarr; &alpha; list | "drop (l, i)" returns what is left after dropping the first `i` elements of the list `l`.<br><br>It raises `Subscript` if `i` &lt; 0 or `i` &gt; `length l`.<br><br>It holds that `take(l, i) @ drop(l, i)` = `l` when 0 &le; `i` &le; `length l`.<br><br>We also have `drop(l, length l)` = `[]`.
+| List.rev | &alpha; list &rarr; &alpha; list | "rev l" returns a list consisting of `l`'s elements in reverse order.
+| List.concat | &alpha; list list &rarr; &alpha; list | "concat l" returns the list that is the concatenation of all the lists in `l` in order. `concat [l1, l2, ... ln]` = `l1 @ l2 @ ... @ ln`
+| List.revAppend | &alpha; list * &alpha; list &rarr; &alpha; list | "revAppend (l1, l2)" returns `(rev l1) @ l2`.
+| List.app | (&alpha; &rarr; unit) &rarr; &alpha; list &rarr; unit | "app f l" applies `f` to the elements of `l`, from left to right.
+| List.map | (&alpha; &rarr; &beta;) &rarr; &alpha; list &rarr; &beta; list | "map f l" applies `f` to each element of `l` from left to right, returning the list of results.
+| List.mapPartial | (&alpha; &rarr; &beta; option) &rarr; &alpha; list &rarr; &beta; list | "mapPartial f l" applies `f` to each element of `l` from left to right, returning a list of results, with `SOME` stripped, where `f` was defined. `f` is not defined for an element of `l` if `f` applied to the element returns `NONE`. The above expression is equivalent to `((map valOf) o (filter isSome) o (map f)) l`.
+| List.find | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; &alpha; option | "find f l" applies `f` to each element `x` of the list `l`, from left to right, until `f x` evaluates to `true`. It returns `SOME(x)` if such an `x` exists; otherwise it returns `NONE`.
+| List.filter | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; &alpha; list | "filter f l" applies `f` to each element `x` of `l`, from left to right, and returns the list of those `x` for which `f x` evaluated to `true`, in the same order as they occurred in the argument list.
+| List.partition | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; &alpha; list * &alpha; list | "partition f l" applies `f` to each element `x` of `l`, from left to right, and returns a pair `(pos, neg)` where `pos` is the list of those `x` for which `f x` evaluated to `true`, and `neg` is the list of those for which `f x` evaluated to `false`. The elements of `pos` and `neg` retain the same relative order they possessed in `l`.
+| List.foldl | (&alpha; * &beta; &rarr; &beta;) &rarr; &beta; &rarr; &alpha; list &rarr; &beta; | "foldl f init \[x1, x2, ..., xn\]" returns `f(xn, ... , f(x2, f(x1, init))...)` or `init` if the list is empty.
+| List.foldr | (&alpha; * &beta; &rarr; &beta;) &rarr; &beta; &rarr; &alpha; list &rarr; &beta; | "foldr f init \[x1, x2, ..., xn\]" returns `f(x1, f(x2, ..., f(xn, init)...))` or `init` if the list is empty.
+| List.exists | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; bool | "exists f l" applies `f` to each element `x` of the list `l`, from left to right, until `f x` evaluates to `true`; it returns `true` if such an `x` exists and `false` otherwise.
+| List.all | (&alpha; &rarr; bool) &rarr; &alpha; list &rarr; bool | "all f l" applies `f` to each element `x` of the list `l`, from left to right, `f x` evaluates to `false`; it returns `false` if such an `x` exists and `true` otherwise. It is equivalent to `not(exists (not o f) l))`.
 
-  /** Function "List.last", of type "&alpha; list &rarr; &alpha;".
-   *
-   * <p>"last l" returns the last element of l. It raises {@code Empty} if l is
-   * nil.
-   */
-  LIST_LAST("List.last", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), h.get(0)))),
-
-  /** Function "List.getItem", of type "&alpha; list &rarr;
-   * (&alpha; * &alpha; list) option".
-   *
-   * <p>"getItem l" returns {@code NONE} if the list is empty, and
-   * {@code SOME(hd l,tl l)} otherwise. This function is particularly useful for
-   * creating value readers from lists of characters. For example, Int.scan
-   * StringCvt.DEC getItem has the type {@code (int,char list) StringCvt.reader}
-   * and can be used to scan decimal integers from lists of characters.
-   */
-  // TODO: make it return an option
-  LIST_GET_ITEM("List.getItem", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(h.list(0), ts.tupleType(h.get(0), h.list(0))))),
-
-  /** Function "List.nth", of type "&alpha; list * int &rarr; &alpha;".
-   *
-   * <p>"nth (l, i)" returns the i(th) element of the list l, counting from 0.
-   * It raises {@code Subscript} if i &lt; 0 or i &ge; length l. We have
-   * nth(l,0) = hd l, ignoring exceptions.
-   */
-  LIST_NTH("List.nth", ts ->
-      ts.forallType(1, h -> ts.fnType(ts.tupleType(h.list(0), INT), h.get(0)))),
-
-  /** Function "List.take", of type "&alpha; list * int &rarr; &alpha; list".
-   *
-   * <p>"take (l, i)" returns the first i elements of the list l. It raises
-   * {@code Subscript} if i &lt; 0 or i &gt; length l.
-   * We have take(l, length l) = l.
-   */
-  LIST_TAKE("List.take", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(ts.tupleType(h.list(0), INT), h.list(0)))),
-
-  /** Function "List.drop", of type "&alpha; list * int &rarr; &alpha; list".
-   *
-   * <p>"drop (l, i)" returns what is left after dropping the first i elements
-   * of the list l.
-   *
-   * <p>It raises {@code Subscript} if i &lt; 0 or i &gt; length l.
-   *
-   * <p>It holds that
-   * {@code take(l, i) @ drop(l, i) = l} when 0 &le; i &le; length l.
-   *
-   * <p>We also have {@code drop(l, length l) = []}.
-   */
-  LIST_DROP("List.drop", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(ts.tupleType(h.list(0), INT), h.list(0)))),
-
-  /** Function "List.rev", of type "&alpha; list &rarr; &alpha; list".
-   *
-   * <p>"rev l" returns a list consisting of l's elements in reverse order.
-   */
-  LIST_REV("List.rev", ts ->
-      ts.forallType(1, h -> ts.fnType(h.list(0), h.list(0)))),
-
-  /** Function "List.concat", of type "&alpha; list list &rarr; &alpha; list".
-   *
-   * <p>"concat l" returns the list that is the concatenation of all the lists
-   * in l in order.
-   * {@code concat[l1,l2,...ln] = l1 @ l2 @ ... @ ln}
-   */
-  LIST_CONCAT("List.concat", ts ->
-      ts.forallType(1, h -> ts.fnType(ts.listType(h.list(0)), h.list(0)))),
-
-  /** Function "List.revAppend", of type "&alpha; list * &alpha; list &rarr;
-   * &alpha; list".
-   *
-   * <p>"revAppend (l1, l2)" returns (rev l1) @ l2.
-   */
-  LIST_REV_APPEND("List.revAppend", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(ts.tupleType(h.list(0), h.list(0)), h.list(0)))),
-
-  /** Function "List.app", of type "(&alpha; &rarr; unit) &rarr; &alpha; list
-   * &rarr; unit".
-   *
-   * <p>"app f l" applies f to the elements of l, from left to right.
-   */
-  LIST_APP("List.app", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(ts.fnType(h.get(0), UNIT), h.list(0), UNIT))),
-
-  /** Function "List.map", of type
-   * "(&alpha; &rarr; &beta;) &rarr; &alpha; list &rarr; &beta; list".
-   *
-   * <p>"map f l" applies f to each element of l from left to right, returning
-   * the list of results.
-   */
-  LIST_MAP("List.map", "map", ts ->
-      ts.forallType(2, t ->
-          ts.fnType(ts.fnType(t.get(0), t.get(1)),
-              ts.listType(t.get(0)), ts.listType(t.get(1))))),
-
-  /** Function "List.mapPartial", of type
-   * "(&alpha; &rarr; &beta; option) &rarr; &alpha; list &rarr; &beta; list".
-   *
-   * <p>"mapPartial f l" applies f to each element of l from left to right,
-   * returning a list of results, with SOME stripped, where f was defined. f is
-   * not defined for an element of l if f applied to the element returns NONE.
-   * The above expression is equivalent to:
-   * {@code ((map valOf) o (filter isSome) o (map f)) l}
-   */
-  // TODO: make this take option
-  LIST_MAP_PARTIAL("List.mapPartial", ts ->
-      ts.forallType(2, h ->
-          ts.fnType(ts.fnType(h.get(0), h.get(1)), h.list(0), h.list(1)))),
-
-  /** Function "List.find", of type "(&alpha; &rarr; bool) &rarr; &alpha; list
-   * &rarr; &alpha; option".
-   *
-   * <p>"find f l" applies f to each element x of the list l, from left to
-   * right, until {@code f x} evaluates to true. It returns SOME(x) if such an x
-   * exists; otherwise it returns NONE.
-   */
-  LIST_FIND("List.find", ts ->
-      ts.forallType(1, h -> ts.fnType(h.predicate(0), h.list(0), h.get(0)))),
-
-  /** Function "List.filter", of type
-   * "(&alpha; &rarr; bool) &rarr; &alpha; list &rarr; &alpha; list".
-   *
-   * <p>"filter f l" applies f to each element x of l, from left to right, and
-   * returns the list of those x for which {@code f x} evaluated to true, in the
-   * same order as they occurred in the argument list.
-   */
-  LIST_FILTER("List.filter", ts ->
-      ts.forallType(1, h -> ts.fnType(h.predicate(0), h.list(0), h.list(0)))),
-
-  /** Function "List.partition", of type "(&alpha; &rarr; bool) &rarr;
-   * &alpha; list &rarr; &alpha; list * &alpha; list".
-   *
-   * <p>"partition f l" applies f to each element x of l, from left to right,
-   * and returns a pair (pos, neg) where pos is the list of those x for which
-   * {@code f x} evaluated to true, and neg is the list of those for which
-   * {@code f x} evaluated to false. The elements of pos and neg retain the same
-   * relative order they possessed in l.
-   */
-  LIST_PARTITION("List.partition", ts ->
-      ts.forallType(1, h ->
-          ts.fnType(h.predicate(0), h.list(0),
-              ts.tupleType(h.list(0), h.list(0))))),
-
-  /** Function "List.foldl", of type "(&alpha; * &beta; &rarr; &beta;) &rarr;
-   *  &beta; &rarr; &alpha; list &rarr; &beta;".
-   *
-   * <p>"foldl f init [x1, x2, ..., xn]" returns
-   * {@code f(xn,...,f(x2, f(x1, init))...)}
-   * or {@code init} if the list is empty.
-   */
-  LIST_FOLDL("List.foldl", ts ->
-      ts.forallType(2, h ->
-          ts.fnType(ts.fnType(ts.tupleType(h.get(0), h.get(1)), h.get(1)),
-              h.get(1), h.list(0), h.get(1)))),
-
-  /** Function "List.foldr", of type "(&alpha; * &beta; &rarr; &beta;) &rarr;
-   *  &beta; &rarr; &alpha; list &rarr; &beta;".
-   *
-   * <p>"foldr f init [x1, x2, ..., xn]" returns
-   * {@code f(x1, f(x2, ..., f(xn, init)...))}
-   * or {@code init} if the list is empty.
-   */
-  LIST_FOLDR("List.foldr", ts ->
-      ts.forallType(2, h ->
-          ts.fnType(ts.fnType(ts.tupleType(h.get(0), h.get(1)), h.get(1)),
-              h.get(1), h.list(0), h.get(1)))),
-
-  /** Function "List.exists", of type "(&alpha; &rarr; bool) &rarr; &alpha; list
-   * &rarr; bool".
-   *
-   * <p>"exists f l" applies f to each element x of the list l, from left to
-   * right, until {@code f x} evaluates to true; it returns true if such an x
-   * exists and false otherwise.
-   */
-  LIST_EXISTS("List.exists", ts ->
-      ts.forallType(1, h -> ts.fnType(h.predicate(0), h.list(0), BOOL))),
-
-  /** Function "List.all", of type
-   * "(&alpha; &rarr; bool) &rarr; &alpha; list &rarr; bool".
-   *
-   * <p>"all f l" applies f to each element x of the list l, from left to right,
-   * until {@code f x} evaluates to false; it returns false if such an x exists
-   * and true otherwise. It is equivalent to not(exists (not o f) l)).
-   */
-  LIST_ALL("List.all", ts ->
-      ts.forallType(1, h -> ts.fnType(h.predicate(0), h.list(0), BOOL))),
-
-  /** Function "List.tabulate", of type
+/** Function "List.tabulate", of type
    * "int * (int &rarr; &alpha;) &rarr; &alpha; list".
    *
    * <p>"tabulate (n, f)" returns a list of length n equal to
