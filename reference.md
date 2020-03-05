@@ -55,10 +55,9 @@ no 'word'
 ## Identifiers
 
 <pre>
-<i>id</i>:   <i>letter</i> (<i>letter</i> | <i>digit</i> | ''' | '_')*
+<i>id</i>:   <i>letter</i> (<i>letter</i> | <i>digit</i> | ''' | <b>_</b>)*
                           alphanumeric
-    | <i>symbol</i> <i>symbol</i>*
-                          symbolic (not allowed for type variables
+    | <i>symbol</i> <i>symbol</i>*      symbolic (not allowed for type variables
                           or module language identifiers)
 <i>symbol</i>: <b>!</b>
     | <b>%</b>
@@ -80,9 +79,9 @@ no 'word'
     | <b>^</b>
     | '<b>|</b>'
     | '<b>*</b>'
-<i>var</i>:  '''(<i>letter</i> | <i>digit</i> | ''' | '_')*
+<i>var</i>:  '''(<i>letter</i> | <i>digit</i> | ''' | <b>_</b>)*
                           unconstrained
-      ''''(<i>letter</i> | <i>digit</i> | ''' | '_'⟩*
+      ''''(<i>letter</i> | <i>digit</i> | ''' | <b>_</b>⟩*
                           equality
 <i>lab</i>:  <i>id</i>                  identifier
       <i>num</i>                 number (may not start with 0)
@@ -95,29 +94,29 @@ no 'word'
     | [ <b>op</b> ] <i>id</i>           value or constructor identifier
     | <i>exp<sub>1</sub></i> <i>exp<sub>2</sub></i>            application
     | <i>exp<sub>1</sub></i> <i>id</i> <i>exp<sub>2</sub></i>         infix application
-    | '(' <i>exp</i> ')'       parentheses
-    | '(' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ')'
+    | '<b>(</b>' <i>exp</i> '<b>)</b>'           parentheses
+    | '<b>(</b>' <i>exp<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>exp<sub>n</sub></i> '<b>)</b>'
                          tuple (n &ne; 1)
-    | '{' <i>expRow</i> '}'   record
-    | '#' <i>lab</i>          record selector
-    | '[' <i>exp<sub>1</sub></i> , ... , <i>exp<sub>n</sub></i> ']'
-                         list (n &ge; 0)
-    | '(' <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> ')'
-                         sequence (n &ge; 2)
+    | <b>{</b> <i>expRow</i> <b>}</b>           record
+    | <b>#</b><i>lab</i>                record selector
+    | '<b>[</b>' <i>exp<sub>1</sub></i> <b>,</b> ... <b>,</b> <i>exp<sub>n</sub></i> '<b>]</b>'
+                          list (n &ge; 0)
+    | '<b>(</b>' <i>exp<sub>1</sub></i> <b>;</b> ... <b>;</b> <i>exp<sub>n</sub></i> '<b>)</b>'
+                          sequence (n &ge; 2)
     | <b>let</b> <i>dec</i> <b>in</b> <i>exp<sub>1</sub></i> ; ... ; <i>exp<sub>n</sub></i> <b>end</b>
-                         local declaration (n ≥ 1)
-    | <i>exp<sub>1</sub></i> <b>andalso</b> <i>exp<sub>2</sub></i>  conjunction
-    | <i>exp<sub>1</sub></i> <b>orelse</b> <i>exp<sub>2</sub></i>   disjunction
+                          local declaration (n ≥ 1)
+    | <i>exp<sub>1</sub></i> <b>andalso</b> <i>exp<sub>2</sub></i>    conjunction
+    | <i>exp<sub>1</sub></i> <b>orelse</b> <i>exp<sub>2</sub></i>     disjunction
     | <b>if</b> <i>exp<sub>1</sub></i> <b>then</b> <i>exp<sub>2</sub></i> <b>else</b> <i>exp<sub>3</sub></i>
-                         conditional
-    | <b>case</b> <i>exp</i> <b>of</b> <i>match</i>  case analysis
-    | <b>fn</b> <i>match</i>          function
-<i>expRow</i>: <i>expRowItem</i> [, <i>exprRowItem</i> ]*
-                         expression row
-<i>expRowItem</i>: [<i>lab</i> '='] <i>exp</i>
-<i>match</i>: <i>matchItem</i> [ '|' <i>matchItem</i> ]*
-                         match
-<i>matchItem<i>: <i>pat</i> '=>' <i>exp</i>
+                          conditional
+    | <b>case</b> <i>exp</i> <b>of</b> <i>match</i>   case analysis
+    | <b>fn</b> <i>match</i>            function
+<i>exprow</i>: <i>exprowItem</i> [<b>,</b> <i>exprowItem</i> ]*
+                          expression row
+<i>exprowItem</i>: [<i>lab</i> <b>=</b>] <i>exp</i>
+<i>match</i>: <i>matchItem</i> [ '<b>|</b>' <i>matchItem</i> ]*
+                          match
+<i>matchItem<i>: <i>pat</i> <b>=&gt;</b> <i>exp</i>
 </pre>
 
 ### Patterns
